@@ -9,7 +9,7 @@ DIR=$(dirname "$0")
 # Install dependencies on Arch
 if [ -e "/etc/arch-release" ]; then
     echo "Installing dependencies"
-    sudo pacman -S ffmpeg libnotify
+    sudo pacman -S ffmpeg libnotify xdotool
 fi
 
 # move shadowreplay to /usr/local/bin
