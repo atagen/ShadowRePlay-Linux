@@ -12,15 +12,11 @@ Recreates Shadowplay's replay feature on Linux
 
 ## Prerequisites
 
-  
+ 
 
-- Have FFMPEG installed
+- Have FFMPEG, libnotify, and xdotool installed
 
--  `sudo pacman -S ffmpeg`
-
-- Have libnotify installed
-
--  `sudo pacman -S libnotify`
+-  `sudo pacman -S ffmpeg libnotify xdotool` (installer will do this if need be)
 
 
 - Have one of (in order of priority given):
@@ -38,7 +34,6 @@ You can get the old version on AUR as `shadowreplay-git`.
 Otherwise, shadowreplay can be installed by running the `install` file after cloning this repo.
 
 This will install the required dependencies on Arch.
-
   
 
 ## Configuration
@@ -46,7 +41,8 @@ This will install the required dependencies on Arch.
 
 Variables specific to your desired setup can be found in the example_config which is installed to `$HOME/.config/shadowreplay`
 
-  
+These will take precedence over any you see defined in the script.
+
 
 ## Setup
 
@@ -58,36 +54,14 @@ i3/sxhkd/Xbindkeys presence should be detected and autobound.
 
 - Meta+F9 to start, Meta+F10 to close, F9 to capture.
 
+If for some reason they are not bound correctly or you wish to rebind them, please refer to the appropriate configuration file for your keybind program.
 
-Old instructions:
+The commands to bind are as follows:
 
-First, configure the key (or key combo) you want to use in order to save your replays.
+- To start: `notify-send ShadowRePlay Running..;shadowreplay`                                                
+- To stop: `notify-send ShadowRePlay Stopping.;killall shadowreplay & killall -s1 ffmpeg`                    
+- To capture: `"""killall --user "$USER" --ignore-case -signal SIGTERM ffmpeg"""` 
 
-- For instructions on how to bind keys, check [here](http://xahlee.info/linux/linux_xbindkeys_tutorial.html)
-
-- Consider making another bind for killing ShadowRePlay. (See below)
-
-- Bind a key to the command `killall --user $USER --ignore-case --signal SIGTERM ffmpeg` so it looks something like this:
-
-```sh
-
-# make F9 save ShadowRePlay replay
-
-killall --user $USER --ignore-case --signal SIGTERM ffmpeg
-
-F9
-
-  
-
-# make F10 kill ShadowRePlay
-
-killall -s1 ffmpeg
-
-F10
-
-```
-
-- Start xbindkeys with `xbindkeys -f ~/.xbindkeysrc`, or reload it with `killall -s1 xbindkeys` if it's already running, for the new bind to take effect.
 
   
 
@@ -112,8 +86,8 @@ F10
 
 ## Notes
 
+Thank you [MAPReiff](https://github.com/MAPReiff) for the original script. 
+
 Heavily inspired by [Toqozz's script](https://github.com/Toqozz/shadowplay-linux).
 
-  
-
-Thank you [Tyler](https://github.com/durcor) for answering my stupid questions while making this.
+Thank you [Tyler](https://github.com/durcor) for fielding MAPReiff's questions while making this.

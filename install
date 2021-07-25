@@ -19,7 +19,7 @@ sudo install "$DIR/shadowreplay" /usr/local/bin
 # set up keybinds ..
 STARTSR="notify-send ShadowRePlay Running..;shadowreplay"
 STOPSR="notify-send ShadowRePlay Stopping.;killall shadowreplay & killall -s1 ffmpeg"
-SAVECLIP="""killall --user "$USER" --ignore-case -signal SIGTERM ffmpeg"""
+SAVECLIP="""killall --user \"\$USER\" --ignore-case -signal SIGTERM ffmpeg"""
 
 # ..if i3 is in use
 if ls /bin/i3;then
