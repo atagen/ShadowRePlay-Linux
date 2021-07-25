@@ -9,10 +9,11 @@ DIR=$(dirname "$0")
 # Install dependencies on Arch
 if [ -e "/etc/arch-release" ]; then
     echo "Installing dependencies"
-    sudo pacman --noconfirm -S ffmpeg libnotify
+    sudo pacman -S ffmpeg libnotify
 fi
 
 # move shadowreplay to /usr/local/bin
+echo "Installing from $DIR to /usr/local/bin.."
 sudo install "$DIR/shadowreplay" /usr/local/bin 
 
 # set up keybinds ..
@@ -23,34 +24,34 @@ SAVECLIP="""killall --user "$USER" --ignore-case -signal SIGTERM ffmpeg"""
 # ..if i3 is in use
 if ls /bin/i3;then
     echo """
-    bindsym F9 "exec $SAVECLIP"
-    bindsym \$mod+F9 "exec $STARTSR" 
-    bindsym \$mod+F10 "exec $STOPSR"
+bindsym F9 \"exec $SAVECLIP\"
+bindsym \$mod+F9 \"exec $STARTSR\" 
+bindsym \$mod+F10 \"exec $STOPSR\"
     """ >> "$HOME/.config/i3/config"
 # ..if sxhkd
 elif ls /bin/sxhkd;then
    echo """
-   F9
-        $SAVECLIP
-   super + F9
-        $STARTSR
-   super + F10
-        $STOPSR
+F9
+    $SAVECLIP
+super + F9
+    $STARTSR
+super + F10
+    $STOPSR
    """ >> "$XDG_CONFIG_HOME/sxhkd/sxhkdrc"
 # ..if xbindkeys is installed
 elif ls /bin/xbindkeys;then
     echo """
-    # make F9 save ShadowRePlay replay
-    "$SAVECLIP"
-       F9
+# make F9 save ShadowRePlay replay
+\"$SAVECLIP\"
+    F9
     
-    # make alt+F9 turn ShadowRePlay on
-    "$STARTSR"
-       Super_L + F9
+# make meta+F9 turn ShadowRePlay on
+\"$STARTSR\"
+    Super_L + F9
 
-    # make alt+F10 turn ShadowRePlay off
-    "$STOPSR"
-       Super_L + F10
+# make meta+F10 turn ShadowRePlay off
+\"$STOPSR\"
+    Super_L + F10
     """ >> "$HOME/.xbindkeysrc"
 fi
 

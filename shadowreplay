@@ -47,8 +47,8 @@ fi
 BASEDIR=$(dirname "$0")
 
 DATE=$(date +%Y-%d-%m-%H:%M:%S)
-#APP=$(xdotool getwindowname `xdotool getactivewindow`)
-FILE="$VIDEO_FOLDER/replay-$DATE.mp4"
+APP=$(xdotool getwindowname `xdotool getactivewindow` | sed -e 's/[^A-Za-z0-9._-]/_/g')
+FILE="$VIDEO_FOLDER/replay-$APP-$DATE.mp4"
 
 echo "capturing to $FILE.., which should be in $VIDEO_FOLDER"
 
