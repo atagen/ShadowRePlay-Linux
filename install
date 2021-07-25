@@ -9,23 +9,23 @@ DIR=$(dirname "$0")
 # Install dependencies on Arch
 if [ -e "/etc/arch-release" ]; then
     echo "Installing dependencies"
-    sudo pacman --noconfirm -S xdotool ffmpeg libnotify
+    sudo pacman --noconfirm -S ffmpeg libnotify
 fi
 
 # move shadowreplay to /usr/local/bin
 sudo install "$DIR/shadowreplay" /usr/local/bin 
 
 # set up keybinds ..
-STARTSR="setsid /usr/local/bin/shadowreplay &>/tmp/shadowreplay.log"
-STOPSR="killall shadowreplay & killall ffmpeg"
-SAVECLIP="""killall --user "$USER" --ignore-case -signal SIGTERM ffmpeg && setsid /usr/local/bin/shadowreplay &>/tmp/shadowreplay.log"""
+STARTSR="notify-send ShadowRePlay Running..;shadowreplay"
+STOPSR="notify-send ShadowRePlay Stopping.;killall shadowreplay & killall -s1 ffmpeg"
+SAVECLIP="""killall --user "$USER" --ignore-case -signal SIGTERM ffmpeg"""
 
 # ..if i3 is in use
 if ls /bin/i3;then
     echo """
-    bindsym $mod+F9 "exec $SAVECLIP"
-    bindsym $mod+Alt+F9 "exec $STARTSR" 
-    bindsym $mod+Alt+F10 "exec $STOPSR"
+    bindsym \$mod+F9 "exec $SAVECLIP"
+    bindsym \$mod+Alt+F9 "exec $STARTSR" 
+    bindsym \$mod+Alt+F10 "exec $STOPSR"
     """ >> "$HOME/.config/i3/config"
 # ..if sxhkd
 elif ls /bin/sxhkd;then

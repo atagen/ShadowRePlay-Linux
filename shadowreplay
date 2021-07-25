@@ -3,10 +3,9 @@
 set -eu
 
 SCREENINFO="$(xrandr | grep primary | cut -d ' ' -f 4)"
-RESOLUTION="$(SCREENINFO | cut -d '+' -f 1)"
-MONITOR="$(SCREENINFO | cut -d '+' -f 2- | sed -e s/+/,/)"
+RESOLUTION="$(echo $SCREENINFO | cut -d '+' -f 1)"
+MONITOR="$(echo $SCREENINFO | cut -d '+' -f 2- | sed -e s/+/,/)"
 SOFTWARE_ENCODE=false
-FPS="60" 
 ENCODER_STANDARD=h264
 REPLAY_BUFFER="5"
 
@@ -33,6 +32,7 @@ elif lspci | grep 'VGA.*ATI' >/dev/null;then
     ENCODER_API=vaapi
 elif lspci | grep 'VGA.*NVIDIA' >/dev/null;then
     ENCODER_API=nvenc
+    echo "nvenc selected"
 elif lspci | grep 'VGA.*Intel' >/dev/null;then
     ENCODER_API=qsv
 fi
@@ -47,8 +47,10 @@ fi
 BASEDIR=$(dirname "$0")
 
 DATE=$(date +%Y-%d-%m-%H:%M:%S)
-APP=$(xdotool getwindowname `xdotool getactivewindow`)
-FILE="$VIDEO_FOLDER/replay-$APP-$DATE.mp4"
+#APP=$(xdotool getwindowname `xdotool getactivewindow`)
+FILE="$VIDEO_FOLDER/replay-$DATE.mp4"
+
+echo "capturing to $FILE.., which should be in $VIDEO_FOLDER"
 
 case $ENCODER_API in
     "vaapi") 
@@ -59,7 +61,7 @@ case $ENCODER_API in
         ENCODER_OPTS="-c:v $ENCODER"
         ;;
     "nvenc") 
-        ENCODER_OPTS="-c:v $ENCODER -preset:v llhq -profile:v high -pix_fmt nv12 -b:v 15M -acodec aac"
+        ENCODER_OPTS="-c:v $ENCODER -preset:v ll -pix_fmt nv12 -b:v 10M -acodec aac"
         ;;
     "qsv") 
         ENCODER_OPTS="-c:v $ENCODER"
@@ -74,7 +76,7 @@ ffmpeg_command(){
         -f x11grab \
         -s "$RESOLUTION" \
         -r "$FPS" \
-        -i "$DISPLAY+$MONITOR" \
+        -i "$DISPLAY+$MONITOR"\
         -f pulse -i default \
         -ar 44100 \
         $ENCODER_OPTS \
