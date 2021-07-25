@@ -18,23 +18,24 @@ Recreates Shadowplay's replay feature on Linux
 
 -  `sudo pacman -S ffmpeg`
 
-- Have Xbindkeys installed
-
--  `sudo pacman -S xbindkeys`
-
 - Have libnotify installed
 
 -  `sudo pacman -S libnotify`
 
-  
+
+- Have one of (in order of priority given):
+    * i3
+    * sxhkd
+    * Xbindkeys
+
+
+ 
 
 ## Installation
 
-If you are using an Arch-based Linux distribution, shadowreplay is in the AUR, so you can install it using your preferred AUR helper. 
+You can get the old version on AUR as `shadowreplay-git`.
 
-Its package name is `shadowreplay-git`.
-
-If you are on a Debian-based distro like Ubuntu or anything else, shadowreplay can be installed by running the `install` file after cloning this repo.
+Otherwise, shadowreplay can be installed by running the `install` file after cloning this repo.
 
 This will install the required dependencies on Arch and install the systemd user service.
 
@@ -42,7 +43,6 @@ This will install the required dependencies on Arch and install the systemd user
 
 ## Configuration
 
-  
 
 Variables specific to your desired setup can be found in the example_config which is installed to `$HOME/.config/shadowreplay`
 
@@ -53,6 +53,14 @@ Variables specific to your desired setup can be found in the example_config whic
   
 
 ### Keybind Setup
+
+i3/sxhkd/Xbindkeys presence should be detected and autobound.
+
+- On XBK: Alt+F9 to start, Alt+F10, F9 to capture.
+
+- Others: Meta+Alt+F9 to start, Meta+Alt+F10 to stop, Meta+F9 to capture.
+
+Old instructions:
 
 First, configure the key (or key combo) you want to use in order to save your replays.
 
@@ -88,7 +96,7 @@ F10
 
   
 
-- Run `shadowreplay` in a terminal
+- (Preferred) hit key combo to start shadowplay. (Otherwise) run `shadowreplay` in a terminal
 
 - Press your configured hotkey to save the replay.
 
@@ -101,7 +109,6 @@ F10
 - Ability to downscale video output during recording
 
 - Dynamic video buffer size allocation based on resolution and FPS
-
   
 
 ## Notes
