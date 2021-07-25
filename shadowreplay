@@ -2,11 +2,14 @@
 
 set -eu
 
-RESOLUTION="$(xdpyinfo | grep dimensions | awk 'NR==1{print $2}')"
+SCREENINFO="$(xrandr | grep primary | cut -d ' ' -f 4)"
+RESOLUTION="$(SCREENINFO | cut -d '+' -f 1)"
+MONITOR="$(SCREENINFO | cut -d '+' -f 2- | sed -e s/+/,/)"
 SOFTWARE_ENCODE=false
 FPS="60" 
 ENCODER_STANDARD=h264
 REPLAY_BUFFER="5"
+
 
 if ls "$HOME"/Videos;then
     VIDEO_FOLDER="$HOME"/Videos
@@ -44,7 +47,8 @@ fi
 BASEDIR=$(dirname "$0")
 
 DATE=$(date +%Y-%d-%m-%H:%M:%S)
-FILE="$VIDEO_FOLDER/replay-$DATE.mp4"
+APP=$(xdotool getwindowname `xdotool getactivewindow`)
+FILE="$VIDEO_FOLDER/replay-$APP-$DATE.mp4"
 
 case $ENCODER_API in
     "vaapi") 
@@ -69,8 +73,8 @@ ffmpeg_command(){
     ffmpeg \
         -f x11grab \
         -s "$RESOLUTION" \
-        -r ${FPS} \
-        -i "$DISPLAY" \
+        -r "$FPS" \
+        -i "$DISPLAY+$MONITOR" \
         -f pulse -i default \
         -ar 44100 \
         $ENCODER_OPTS \
