@@ -56,9 +56,8 @@ Variables specific to your desired setup can be found in the example_config whic
 
 i3/sxhkd/Xbindkeys presence should be detected and autobound.
 
-- On XBK: Alt+F9 to start, Alt+F10, F9 to capture.
+- Meta+F9 to start, Meta+F10 to close, F9 to capture.
 
-- Others: Meta+Alt+F9 to start, Meta+Alt+F10 to stop, Meta+F9 to capture.
 
 Old instructions:
 
