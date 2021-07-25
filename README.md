@@ -37,7 +37,7 @@ You can get the old version on AUR as `shadowreplay-git`.
 
 Otherwise, shadowreplay can be installed by running the `install` file after cloning this repo.
 
-This will install the required dependencies on Arch and install the systemd user service.
+This will install the required dependencies on Arch.
 
   
 
