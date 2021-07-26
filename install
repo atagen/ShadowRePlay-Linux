@@ -22,26 +22,68 @@ STARTSR="shadowreplay"
 STOPSR="killall shadowreplay & killall -s1 ffmpeg"
 SAVECLIP="""killall --user \\\"\$USER\\\" --ignore-case -signal SIGTERM ffmpeg"""
 
+echo "looking for possible keybinds.."
+
+BINDS_INSTALLED=0
 # ..if i3 is in use
 if ls /bin/i3;then
-    echo """
+    echo "found i3!";
+   #find any config
+
+    if (ls $HOME/.config/i3/config);then
+        CONF=$HOME/.config/i3/config
+    elif ( ls $HOME/.i3/config);then
+        CONF=$HOME/.i3/config
+    else
+        CONF="err"
+    fi
+
+    # check if we already have some binds
+    
+    if [ $CONF == "err" ];then
+        echo "could not find i3 config file!"
+    elif [ $(cat $CONF | grep shadowreplay | wc -l) == 0 ];then       
+        echo """
 bindsym F9 \"exec $SAVECLIP\"
 bindsym \$mod+F9 \"exec $STARTSR; exec $NOTIFY Running!\" 
 bindsym \$mod+F10 \"exec $STOPSR\; exec $NOTIFY Stopping...\"
-    """ >> "$HOME/.config/i3/config"
+        """ >> "$CONF" &&
+            BINDS_INSTALLED=1
+    else
+        echo "binds already found in file "$CONF
+        BINDS_INSTALLED=1
+    fi
+
 # ..if sxhkd
 elif ls /bin/sxhkd;then
-   echo """
+    echo "found sxhkd!"
+    if (ls "$XDG_CONFIG_HOME/sxhkd/sxhkdrc");then
+        CONF="$XDG_CONFIG_HOME/sxhkd/sxhkdrc" 
+        if [ $(cat $CONF | grep shadowreplay | wc -l) == 0 ];then       
+            echo """
 F9
     $SAVECLIP
 super + F9
     $STARTSR;$NOTIFY Running!
 super + F10
     $STOPSR;$NOTIFY Stopping...
-   """ >> "$XDG_CONFIG_HOME/sxhkd/sxhkdrc"
+   """ >> $CONF &&
+    BINDS_INSTALLED=1
+        else
+            echo "binds already found in file "$CONF
+            BINDS_INSTALLED=1
+        fi
+    else
+        echo "could not find sxkhd config file!"
+    fi
+
 # ..if xbindkeys is installed
 elif ls /bin/xbindkeys;then
-    echo """
+    echo "found xbindkeys!"
+    if (ls "$HOME/.xbindkeysrc");then
+        $CONF="$HOME/.xbindkeysrc"
+        if [ $(cat $CONF | grep shadowreplay | wc -l) == 0 ];then        
+            echo "
 # make F9 save ShadowRePlay replay
 \"$SAVECLIP\"
     F9
@@ -53,11 +95,33 @@ elif ls /bin/xbindkeys;then
 # make meta+F10 turn ShadowRePlay off
 \"$STOPSR\;$NOTIFY Stopping...\"
     Super_L + F10
-    """ >> "$HOME/.xbindkeysrc"
+    " >> "$HOME/.xbindkeysrc" &&
+             BINDS_INSTALLED=1       
+        else
+            echo "binds already found in file" $CONF
+            BINDS_INSTALLED=1
+        fi
+    else
+        echo "could not find xbindkeys config!"
+    fi
 fi
+
+if [ $BINDS_INSTALLED != 1 ];then
+    echo "no key binds were installed for this copy of ShadowRePlay. \
+        please install a hotkey daemon and configure it for the following actions:"
+    echo "Save clip: "$SAVECLIP
+    echo "(Recommended: F9)"
+    echo "Start ShadowRePlay: "$STARTSR
+    echo "(Recommended: Meta+F9)"
+    echo "Stop ShadowRePlay: "$STOPSR
+    echo "(Recommended: Meta+F10)"
+fi
+
+
 
 echo """
 
 Installation complete!
 Press Meta+F9 to start ShadowReplay, then F9 to save a replay!
-Meta+F10 will shut it down."""
+Meta+F10 will shut it down.
+"""
