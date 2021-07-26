@@ -17,16 +17,17 @@ echo "Installing from $DIR to /usr/local/bin.."
 sudo install "$DIR/shadowreplay" /usr/local/bin 
 
 # set up keybinds ..
-STARTSR="notify-send ShadowRePlay Running..;shadowreplay"
-STOPSR="notify-send ShadowRePlay Stopping.;killall shadowreplay & killall -s1 ffmpeg"
-SAVECLIP="""killall --user \"\$USER\" --ignore-case -signal SIGTERM ffmpeg"""
+NOTIFY="notify-send ShadowRePlay "
+STARTSR="shadowreplay"
+STOPSR="killall shadowreplay & killall -s1 ffmpeg"
+SAVECLIP="""killall --user \\\"\$USER\\\" --ignore-case -signal SIGTERM ffmpeg"""
 
 # ..if i3 is in use
 if ls /bin/i3;then
     echo """
 bindsym F9 \"exec $SAVECLIP\"
-bindsym \$mod+F9 \"exec $STARTSR\" 
-bindsym \$mod+F10 \"exec $STOPSR\"
+bindsym \$mod+F9 \"exec $STARTSR; exec $NOTIFY Running!\" 
+bindsym \$mod+F10 \"exec $STOPSR\; exec $NOTIFY Stopping...\"
     """ >> "$HOME/.config/i3/config"
 # ..if sxhkd
 elif ls /bin/sxhkd;then
@@ -34,9 +35,9 @@ elif ls /bin/sxhkd;then
 F9
     $SAVECLIP
 super + F9
-    $STARTSR
+    $STARTSR;$NOTIFY Running!
 super + F10
-    $STOPSR
+    $STOPSR;$NOTIFY Stopping...
    """ >> "$XDG_CONFIG_HOME/sxhkd/sxhkdrc"
 # ..if xbindkeys is installed
 elif ls /bin/xbindkeys;then
@@ -46,11 +47,11 @@ elif ls /bin/xbindkeys;then
     F9
     
 # make meta+F9 turn ShadowRePlay on
-\"$STARTSR\"
+\"$STARTSR;$NOTIFY Running!\"
     Super_L + F9
 
 # make meta+F10 turn ShadowRePlay off
-\"$STOPSR\"
+\"$STOPSR\;$NOTIFY Stopping...\"
     Super_L + F10
     """ >> "$HOME/.xbindkeysrc"
 fi

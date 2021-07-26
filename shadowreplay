@@ -7,7 +7,6 @@ RESOLUTION="$(echo $SCREENINFO | cut -d '+' -f 1)"
 MONITOR="$(echo $SCREENINFO | cut -d '+' -f 2- | sed -e s/+/,/)"
 SOFTWARE_ENCODE=false
 ENCODER_STANDARD=h264
-REPLAY_BUFFER="5"
 
 
 if ls "$HOME"/Videos;then
@@ -19,12 +18,13 @@ else
     VIDEO_FOLDER="$HOME"/Videos
 fi
 
+# Source user-specific config
+. $HOME/.config/shadowreplay
+
+
 BUFFER_SEC=$((REPLAY_BUFFER * 60))
 BUFFER_SEGMENT_LENGTH="30"
 BUFFER_SEGMENTS=$((BUFFER_SEC / BUFFER_SEGMENT_LENGTH))
-
-# Source user-specific config
-. $HOME/.config/shadowreplay
 
 if $NONFREE_AMD_ENCODER;then
     ENCODER_API=amf
@@ -85,6 +85,8 @@ ffmpeg_command(){
         -segment_wrap "$BUFFER_SEGMENTS" \
         -segment_list /tmp/ShadowRePlay.m3u8 \
         -segment_list_size 6 /tmp/ShadowRePlaySeg%d.ts
+        -segment_list_flags live
+        -reset_timestamps 1
     }
 
 ffmpeg_command ||
@@ -97,7 +99,7 @@ find  /tmp -name 'ShadowRePlay*' -exec rm {} \; &&
 
 notify-send -i video \
 	"ShadowRePlay" \
-	"Replay saved to $FILE"
+	"Replay saved to $FILE!"
 
 cd "$BASEDIR" &&
     
