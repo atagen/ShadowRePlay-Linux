@@ -61,7 +61,7 @@ case $ENCODER_API in
         ENCODER_OPTS="-c:v $ENCODER"
         ;;
     "nvenc") 
-        ENCODER_OPTS="-c:v $ENCODER -preset:v ll -pix_fmt nv12 -b:v 10M -acodec aac"
+        ENCODER_OPTS="-c:v $ENCODER -preset 13 -tune 3 -pix_fmt nv12 -b:v 10M -acodec aac"
         ;;
     "qsv") 
         ENCODER_OPTS="-c:v $ENCODER"
@@ -76,6 +76,8 @@ ffmpeg_command(){
         -f x11grab \
         -s "$RESOLUTION" \
         -r "$FPS" \
+        -probesize 4M \
+        -thread_queue_size 512 \
         -i "$DISPLAY+$MONITOR"\
         -f pulse -i default \
         -ar 44100 \
@@ -84,9 +86,8 @@ ffmpeg_command(){
         -segment_time 30 \
         -segment_wrap "$BUFFER_SEGMENTS" \
         -segment_list /tmp/ShadowRePlay.m3u8 \
-        -segment_list_size 6 /tmp/ShadowRePlaySeg%d.ts
+        -segment_list_size 6 /tmp/ShadowRePlaySeg%d.ts \
         -segment_list_flags live
-        -reset_timestamps 1
     }
 
 ffmpeg_command ||
@@ -95,11 +96,11 @@ ffmpeg \
     -i /tmp/ShadowRePlay.m3u8 \
     -c copy "$FILE" -loglevel quiet &&
 
-find  /tmp -name 'ShadowRePlay*' -exec rm {} \; && 
-
-notify-send -i video \
+exec notify-send -i video \
 	"ShadowRePlay" \
 	"Replay saved to $FILE!"
+
+find  /tmp -name 'ShadowRePlay*' -exec rm {} \; && 
 
 cd "$BASEDIR" &&
     
