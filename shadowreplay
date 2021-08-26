@@ -104,4 +104,4 @@ find  /tmp -name 'ShadowRePlay*' -exec rm {} \; &&
 
 cd "$BASEDIR" &&
     
-./shadowreplay
+shadowreplay
